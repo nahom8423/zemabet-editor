@@ -46,6 +46,22 @@ _CHANNEL_META_CACHE_TIME = 0.0
 _BOT_USER_ID: str | None = None
 
 
+@app.after_request
+def add_cors_headers(resp):
+    allowed_origin = os.getenv("DASHBOARD_ORIGIN", "https://nahom8423.github.io")
+    resp.headers["Access-Control-Allow-Origin"] = allowed_origin
+    resp.headers["Access-Control-Allow-Methods"] = "GET,POST,OPTIONS"
+    resp.headers["Access-Control-Allow-Headers"] = "Content-Type,Authorization"
+    return resp
+
+
+@app.before_request
+def handle_options():
+    if request.method == "OPTIONS":
+        resp = app.make_response(("", 204))
+        return add_cors_headers(resp)
+
+
 def _coerce_int(value: Any) -> int | None:
     if isinstance(value, int):
         return value

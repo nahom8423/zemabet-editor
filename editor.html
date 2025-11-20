@@ -343,6 +343,7 @@
         let selectedChannelId = null;
         let chunkPreviewTimer = null;
         let chunkPreviewController = null;
+        const API_BASE = window.API_BASE || "http://5.78.130.60:5044";
 
         const titleInput = document.getElementById('msgTitle');
         const contentInput = document.getElementById('msgContent');
@@ -432,7 +433,7 @@
 
         async function loadChannels() {
             try {
-                const response = await fetch('/api/channels');
+                const response = await fetch(`${API_BASE}/api/channels`);
                 if (!response.ok) {
                     throw new Error(`Failed to load channels (${response.status})`);
                 }
@@ -516,7 +517,7 @@
             }
             chunkPreviewController = new AbortController();
             try {
-                const response = await fetch('/api/preview', {
+                const response = await fetch(`${API_BASE}/api/preview`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -639,7 +640,7 @@
             btn.style.color = 'black';
 
             try {
-                const response = await fetch('/api/save', {
+                const response = await fetch(`${API_BASE}/api/save`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
