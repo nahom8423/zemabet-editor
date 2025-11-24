@@ -379,16 +379,30 @@
 
         function buildGroupedChannelIds() {
             const grouped = {};
-            const ids = Object.keys(channelsConfig);
+            const categoryOrder = {};
+            const ids = Object.keys(channelsConfig).sort((a, b) => {
+                const metaA = channelMeta[a] || {};
+                const metaB = channelMeta[b] || {};
+                const catPosA = typeof metaA.category_position === 'number' ? metaA.category_position : 1e6;
+                const catPosB = typeof metaB.category_position === 'number' ? metaB.category_position : 1e6;
+                if (catPosA !== catPosB) return catPosA - catPosB;
+                const posA = typeof metaA.position === 'number' ? metaA.position : 1e6;
+                const posB = typeof metaB.position === 'number' ? metaB.position : 1e6;
+                if (posA !== posB) return posA - posB;
+                return a.localeCompare(b);
+            });
+
             ids.forEach((id) => {
                 const meta = channelMeta[id] || {};
                 const category = meta.category || 'Uncategorized';
+                const catPos = typeof meta.category_position === 'number' ? meta.category_position : 1e6;
+                categoryOrder[category] = Math.min(categoryOrder[category] ?? catPos, catPos);
                 if (!grouped[category]) {
                     grouped[category] = [];
                 }
                 grouped[category].push(id);
             });
-            return grouped;
+            return { grouped, categoryOrder };
         }
 
         function populateChannelDropdown() {
@@ -402,8 +416,13 @@
                 channelLabel.textContent = 'No channels found';
                 return;
             }
-            const grouped = buildGroupedChannelIds();
-            const categories = Object.keys(grouped).sort((a, b) => a.localeCompare(b));
+            const { grouped, categoryOrder } = buildGroupedChannelIds();
+            const categories = Object.keys(grouped).sort((a, b) => {
+                const posA = categoryOrder[a] ?? 1e6;
+                const posB = categoryOrder[b] ?? 1e6;
+                if (posA !== posB) return posA - posB;
+                return a.localeCompare(b);
+            });
 
             categories.forEach((category) => {
                 const header = document.createElement('div');
