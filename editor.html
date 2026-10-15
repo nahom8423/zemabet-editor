@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
+    <script>
+        // GitHub Pages is HTTPS and the editor API is plain HTTP, so browsers block saves from here.
+        if (location.hostname.endsWith("github.io")) location.replace("http://158.101.101.50:5000/" + location.search);
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Editor - Zema Bet</title>
